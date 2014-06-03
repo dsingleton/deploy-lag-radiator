@@ -24,18 +24,18 @@
 <body>
 
 <table>
-  <tr data-name="static" data-tag="release_2008">
-    <td class="name">Static</td>
+  <tr data-name="static">
+    <td class="name"><a href="">Static</a></td>
     <td class="ahead"></td>
   </tr>
 
-  <tr data-name="whitehall" data-tag="build-11014">
-    <td class="name">Whitehall</td>
+  <tr data-name="whitehall">
+    <td class="name"><a href="">Whitehall</a></td>
     <td class="ahead"></td>
   </tr>
 
-  <tr data-name="frontend" data-tag="release_1520">
-    <td class="name">Frontend</td>
+  <tr data-name="frontend">
+    <td class="name"><a href="">Frontend</a></td>
     <td class="ahead"></td>
   </tr>
 </table>
@@ -64,12 +64,18 @@ $(document).ready(function() {
 
   $('tr').each(function(i, repo) {
     repo = $(repo);
-    api_url = build_api_url(repo.data('name'), repo.data('tag'));
+    api_url = build_api_url(repo.data('name'), 'deployed-to-production');
     $.ajax({
       url: api_url,
       dataType: 'json',
       success: function(repo_state) {
         $(repo).find('.ahead').html(repo_state.ahead_by);
+        $(repo).find('.name a').attr('href', repo_state.html_url);
+      },
+      error: function(e) {
+        if (e.status == 404) {
+          $(repo).find('.ahead').html('Unknown compare tag');
+        }
       },
       headers: {
         'Authorization': 'token ' + api_token
