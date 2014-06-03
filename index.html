@@ -15,34 +15,76 @@
 
   h1 {
     margin: 0;
-    font-size: 4vw;
+    font-size: 3vw;
     background: dodgerBlue;
     color: #fff;
-    padding: .25em 1em;
-    font-weight: normal
+    padding: 1vw 4vw;
+    font-weight: normal;
   }
 
   table {
     width: 100%;
   }
+
+  table th {
+    text-align: left;
+    padding: 2vw 4vw 0;
+    color: #ccc;
+    font-weight: normal;
+    font-size: 2vw;
+  }
+
+  table th.status {
+    visibility: hidden;
+  }
+
   table td {
     font-size: 4vw;
-    padding: .5em 1em;
+    padding: 2vw 4vw;
     border-bottom: 1px solid #ccc;
   }
 
+  table td.name a {
+    text-decoration: none;
+    color: #222;
+  }
+
   table td.time {
-    font-size: 2vw;
-    padding: .5em 1em;
+    font-size: 3vw;
     color: #888;
   }
+
+  table td.status {
+    text-align: center;
+  }
+
+  table tr.good td.status {
+    color: green;
+  }
+
+  table tr.stale td.status {
+    color: red;
+  }
+
+  table tr.unknown td.status {
+    color: orange;
+  }
+
   </style>
 </head>
 <body>
 
 <h1>Undeployed commits</h1>
 
-<table id="repos"></table>
+<table id="repos">
+  <thead>
+    <tr>
+      <th class="status"># commits</th>
+      <th class="name">Application</th>
+      <th class="last-deploy">Last deploy</th>
+    </tr>
+  </thead>
+</table>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script>
@@ -105,10 +147,10 @@ $(document).ready(function() {
 
   $(repos).each(function(i, repo) {
 
-    var $repo = $('<tr>').attr('class', 'repo-' + repo).append(
-      $('<td class="name">').append(
-        $('<a>').attr('href', build_http_compare_url(repo, from_tag, to_tag)).text(repo)
-      )).append('<td class="status">').append('<td class="time">');
+    var $repo = $('<tr>').attr('class', 'repo-' + repo)
+      .append('<td class="status">')
+      .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo, from_tag, to_tag)).text(repo)))
+      .append('<td class="time">');
 
     repos_container.append($repo);
 
@@ -117,12 +159,15 @@ $(document).ready(function() {
       url: api_url,
       dataType: 'json',
       success: function(repo_state) {
-          $repo.find('.status').text(repo_state.ahead_by || '✔');
+        $repo.find('.status').text(repo_state.ahead_by || '✔');
+        $repo.addClass(repo_state.ahead_by ? 'stale' : 'good');
         $repo.find('.time').text(prettyDate(repo_state.base_commit.commit.author.date));
       },
       error: function(e) {
         // Most likely invalid comparison, one (or both) of the tags don't exist
         // Or the repo name is bad
+        $repo.addClass('unknown');
+
         if (e.status == 404) {
           $repo.find('.status').text('?');
         }
