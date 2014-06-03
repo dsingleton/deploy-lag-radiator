@@ -81,7 +81,7 @@
     <tr>
       <th class="status"># commits</th>
       <th class="name">Application</th>
-      <th class="last-deploy">Last deploy</th>
+      <th class="last-deploy">Oldest commit</th>
     </tr>
   </thead>
 </table>
@@ -161,7 +161,9 @@ $(document).ready(function() {
       success: function(repo_state) {
         $repo.find('.status').text(repo_state.ahead_by || '✔');
         $repo.addClass(repo_state.ahead_by ? 'stale' : 'good');
-        $repo.find('.time').text(prettyDate(repo_state.base_commit.commit.author.date));
+        if (repo_state.commits) {
+          $repo.find('.time').text(prettyDate(repo_state.commits[0].commit.author.date));
+        }
       },
       error: function(e) {
         // Most likely invalid comparison, one (or both) of the tags don't exist
