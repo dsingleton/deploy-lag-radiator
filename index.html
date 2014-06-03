@@ -89,38 +89,42 @@ function prettyDate(time){
 $(document).ready(function() {
 
   var repos = getQueryVariable('repos').split(',');
+  var from_tag = getQueryVariable('from');
+  var to_tag = getQueryVariable('to') || 'master';
   var api_token = getQueryVariable('token');
+
   var repos_container = $('#repos');
 
-  var build_api_url = function(repo, deployed_tag) {
-    return 'https://api.github.com/repos/alphagov/' + repo + '/compare/' + deployed_tag + '...master'
+  var build_api_url = function(repo, from_tag, to_tag) {
+    return 'https://api.github.com/repos/alphagov/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
-  var build_http_compare_url = function(repo, deployed_tag) {
-    return 'https://github.com/alphagov/' + repo + '/compare/' + deployed_tag + '...master'
+  var build_http_compare_url = function(repo, from_tag, to_tag) {
+    return 'https://github.com/alphagov/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
   $(repos).each(function(i, repo) {
 
     var $repo = $('<tr>').attr('class', 'repo-' + repo).append(
       $('<td class="name">').append(
-        $('<a>').attr('href', build_http_compare_url(repo, 'deployed-to-production')).text(repo)
+        $('<a>').attr('href', build_http_compare_url(repo, from_tag, to_tag)).text(repo)
       )).append('<td class="status">').append('<td class="time">');
 
     repos_container.append($repo);
 
-    api_url = build_api_url(repo, 'deployed-to-production'); 
+    api_url = build_api_url(repo, from_tag, to_tag);
     $.ajax({
       url: api_url,
       dataType: 'json',
       success: function(repo_state) {
-        $repo.find('.status').text(repo_state.ahead_by);
+          $repo.find('.status').text(repo_state.ahead_by || '✔');
         $repo.find('.time').text(prettyDate(repo_state.base_commit.commit.author.date));
       },
       error: function(e) {
-        // This is actually up to date, no diff = 404. Thanks GH
+        // Most likely invalid comparison, one (or both) of the tags don't exist
+        // Or the repo name is bad
         if (e.status == 404) {
-          $repo.find('.status').text('✔');
+          $repo.find('.status').text('?');
         }
       },
       headers: {
