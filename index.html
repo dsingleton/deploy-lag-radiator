@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Deploy Lag Radiator</title>
   <style type="text/css">
   body {
@@ -11,34 +13,30 @@
     background: #fff
   }
 
+  h1 {
+    margin: 0;
+    font-size: 4vw;
+    background: dodgerBlue;
+    color: #fff;
+    padding: .25em 1em;
+    font-weight: normal
+  }
+
   table {
     width: 100%;
   }
   table td {
     font-size: 4vw;
-    padding: 1em;
+    padding: .5em 1em;
     border-bottom: 1px solid #ccc;
   }
   </style>
 </head>
 <body>
 
-<table>
-  <tr data-name="static">
-    <td class="name"><a href="">Static</a></td>
-    <td class="ahead"></td>
-  </tr>
+<h1>Undeployed commits</h1>
 
-  <tr data-name="whitehall">
-    <td class="name"><a href="">Whitehall</a></td>
-    <td class="ahead"></td>
-  </tr>
-
-  <tr data-name="frontend">
-    <td class="name"><a href="">Frontend</a></td>
-    <td class="ahead"></td>
-  </tr>
-</table>
+<table id="repos"></table>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script>
@@ -57,24 +55,38 @@ function getQueryVariable(variable) {
 
 $(document).ready(function() {
 
+  var repos = getQueryVariable('repos').split(',');
   var api_token = getQueryVariable('token');
+  var repos_container = $('#repos');
+
   var build_api_url = function(repo, deployed_tag) {
     return 'https://api.github.com/repos/alphagov/' + repo + '/compare/' + deployed_tag + '...master'
   }
 
-  $('tr').each(function(i, repo) {
-    repo = $(repo);
-    api_url = build_api_url(repo.data('name'), 'deployed-to-production');
+  var build_http_compare_url = function(repo, deployed_tag) {
+    return 'https://github.com/alphagov/' + repo + '/compare/' + deployed_tag + '...master'
+  }
+
+  $(repos).each(function(i, repo) {
+
+    var $repo = $('<tr>').attr('class', 'repo-' + repo).append(
+      $('<td class="name">').append(
+        $('<a>').attr('href', build_http_compare_url(repo, 'deployed-to-production')).text(repo)
+      )).append('<td class="status">');
+
+    repos_container.append($repo);
+
+    api_url = build_api_url(repo, 'deployed-to-production'); 
     $.ajax({
       url: api_url,
       dataType: 'json',
       success: function(repo_state) {
-        $(repo).find('.ahead').html(repo_state.ahead_by);
-        $(repo).find('.name a').attr('href', repo_state.html_url);
+        $repo.find('.status').text(repo_state.ahead_by);
       },
       error: function(e) {
+        // This is actually up to date, no diff = 404. Thanks GH
         if (e.status == 404) {
-          $(repo).find('.ahead').html('Unknown compare tag');
+          $repo.find('.status').text('✔');
         }
       },
       headers: {
