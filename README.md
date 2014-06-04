@@ -12,6 +12,7 @@ Pass configuration as query params, supported params are;
 
 * `token` - A Github API token
 * `repos` - A comma-seperated list of repository names on [@alphagov](https://github.com/alphagov)
+* `refresh` - How often to update, in seconds [_optional_, defaults to `60`]
 * `from` - A treeish (tag, branch, etc) to start comparing from
 * `to` - A treeish (tag, branch, etc) to compare until [_optional_, defaults to `master`]
 
