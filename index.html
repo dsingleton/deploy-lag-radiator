@@ -134,34 +134,43 @@ $(document).ready(function() {
   var from_tag = getQueryVariable('from');
   var to_tag = getQueryVariable('to') || 'master';
   var api_token = getQueryVariable('token');
+  var repo_owner = getQueryVariable('owner') || 'alphagov';
 
   var repos_container = $('#repos');
 
   var build_api_url = function(repo, from_tag, to_tag) {
-    return 'https://api.github.com/repos/alphagov/' + repo + '/compare/' + from_tag + '...' + to_tag
+    return 'https://api.github.com/repos/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
   var build_http_compare_url = function(repo, from_tag, to_tag) {
-    return 'https://github.com/alphagov/' + repo + '/compare/' + from_tag + '...' + to_tag
+    return 'https://github.com/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
   $(repos).each(function(i, repo) {
 
+    var repo_path = repo;
+    if (repo.match(/\//)) {
+      repo = repo.split('/')[1];
+    }
+    else {
+      repo_path = repo_owner + '/' + repo;
+    }
+
     var $repo = $('<tr>').attr('class', 'repo-' + repo)
       .append('<td class="status">')
-      .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo, from_tag, to_tag)).text(repo)))
+      .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo_path, from_tag, to_tag)).text(repo)))
       .append('<td class="time">');
 
     repos_container.append($repo);
 
-    api_url = build_api_url(repo, from_tag, to_tag);
+    api_url = build_api_url(repo_path, from_tag, to_tag);
     $.ajax({
       url: api_url,
       dataType: 'json',
       success: function(repo_state) {
         $repo.find('.status').text(repo_state.ahead_by || '✔');
         $repo.addClass(repo_state.ahead_by ? 'stale' : 'good');
-        if (repo_state.commits) {
+        if (repo_state.commits.length) {
           $repo.find('.time').text(prettyDate(repo_state.commits[0].commit.author.date));
         }
       },
