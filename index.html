@@ -34,10 +34,6 @@
     font-size: 2vw;
   }
 
-  table th.status {
-    visibility: hidden;
-  }
-
   table td {
     font-size: 4vw;
     padding: 2vw 4vw;
@@ -54,19 +50,23 @@
     color: #888;
   }
 
-  table td.status {
+  table td.commits,
+  table td.merges {
     text-align: center;
   }
 
-  table tr.good td.status {
+  table tr.good td.commits,
+  table tr.good td.merges {
     color: green;
   }
 
-  table tr.stale td.status {
+  table tr.stale td.commits,
+  table tr.stale td.merges, {
     color: red;
   }
 
-  table tr.unknown td.status {
+  table tr.unknown td.commits,
+  table tr.unknown td.merges {
     color: orange;
   }
 
@@ -79,9 +79,10 @@
 <table id="repos">
   <thead>
     <tr>
-      <th class="status"># commits</th>
-      <th class="name">Application</th>
-      <th class="last-deploy">Oldest commit</th>
+      <th class="commits">commits</th>
+      <th class="merges">merges</th>
+      <th class="name">application</th>
+      <th class="last-deploy">oldest commit</th>
     </tr>
   </thead>
 </table>
@@ -174,7 +175,8 @@ $(document).ready(function() {
     $(repos).each(function(i, repo) {
 
       var $repo = $('<tr>').attr('class', 'repo-' + repo)
-        .append('<td class="status">')
+        .append('<td class="commits">')
+        .append('<td class="merges">')
         .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
         .append('<td class="time">');
 
@@ -190,8 +192,13 @@ $(document).ready(function() {
         url: api_url,
         dataType: 'json',
         success: function(repo_state) {
-          repo.$el.find('.status').text(repo_state.ahead_by || '✔');
+          repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
           repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
+          var mergeCount = repo_state.commits.filter(function(commit) {
+            return commit.commit.message.match(/^Merge/); }
+          ).length;
+          repo.$el.find('.merges').text(mergeCount || '✔');
+
           if (repo_state.commits.length) {
             repo.$el.find('.time').text(prettyDate(repo_state.commits[0].commit.author.date));
           }
@@ -202,7 +209,7 @@ $(document).ready(function() {
           repo.$el.addClass('unknown');
 
           if (e.status == 404) {
-            repo.$el.find('.status').text('?');
+            repo.$el.find('.commits', '.merges').text('?');
           }
         },
         headers: {
