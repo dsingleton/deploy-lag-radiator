@@ -195,7 +195,7 @@ $(document).ready(function() {
           repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
           repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
           var mergeCount = repo_state.commits.filter(function(commit) {
-            return commit.commit.message.match(/^Merge/); }
+            return commit.parents.length > 1}
           ).length;
           repo.$el.find('.merges').text(mergeCount || '✔');
 
