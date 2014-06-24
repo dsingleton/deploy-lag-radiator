@@ -20,23 +20,23 @@ function getQueryVariable(variable) {
 // long ago the date represents.
 function prettyDate(time){
   var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
-    diff = (((new Date()).getTime() - date.getTime()) / 1000),
-    day_diff = Math.floor(diff / 86400);
+  diff = (((new Date()).getTime() - date.getTime()) / 1000),
+  day_diff = Math.floor(diff / 86400);
 
   if ( isNaN(day_diff) || day_diff < 0)
     return;
 
   return day_diff == 0 && (
-      diff < 60 && "just now" ||
-      diff < 120 && "1 minute ago" ||
-      diff < 3600 && Math.floor( diff / 60 ) + " minutes ago" ||
-      diff < 7200 && "1 hour ago" ||
-      diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
-    day_diff == 1 && "Yesterday" ||
-    day_diff < 7 && day_diff + " days ago" ||
-    day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago" ||
-    day_diff < 365 && Math.ceil( day_diff / 31 ) + " months ago" ||
-    '1 Year+';
+    diff < 60 && "just now" ||
+    diff < 120 && "1 minute ago" ||
+    diff < 3600 && Math.floor( diff / 60 ) + " minutes ago" ||
+    diff < 7200 && "1 hour ago" ||
+    diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
+  day_diff == 1 && "Yesterday" ||
+  day_diff < 7 && day_diff + " days ago" ||
+  day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago" ||
+  day_diff < 365 && Math.ceil( day_diff / 31 ) + " months ago" ||
+  '1 Year+';
 
 }
 
@@ -46,34 +46,47 @@ $(document).ready(function() {
   var refresh_rate = (getQueryVariable('refresh') || 60) * 1000;
   var from_tag = getQueryVariable('from');
   var to_tag = getQueryVariable('to') || 'master';
-  var api_token = getQueryVariable('token');
+  var api_token = "9e0ce7d0b9d316907f8db733c6a804c1ab632201";
   var repo_owner = getQueryVariable('owner') || 'alphagov';
 
   var repos_container = $('#repos');
 
   var build_api_url = function(repo, from_tag, to_tag) {
-    return 'https://api.github.com/repos/' + repo + '/compare/' + from_tag + '...' + to_tag
-  }
+    return [
+    'https://api.github.com/repos/',
+    repo,
+    'compare/',
+    from_tag,
+    '...',
+    to_tag].join('');
+  };
 
   var build_http_compare_url = function(repo, from_tag, to_tag) {
-    return 'https://github.com/' + repo + '/compare/' + from_tag + '...' + to_tag
-  }
+    return [
+      'https://github.com/',
+      repo,
+      'compare',
+      from_tag,
+      '...',
+      to_tag
+    ].join('');
+  };
 
   repos = $.map(repos, function(repo) {
     var path = repo,
-        name = repo;
+    name = repo;
 
-    if (repo.match(/\//)) {
-      name = path.split('/')[1];
-    }
-    else {
+    // if (repo.match(/\//)) {
+    //   name = path.split('/')[1];
+    // }
+    // else {
       path = repo_owner + '/' + name;
-    }
+    // }
 
     return {
       path: path,
       name: name
-    }
+    };
   });
 
   initialise(repos);
@@ -83,10 +96,10 @@ $(document).ready(function() {
     $(repos).each(function(i, repo) {
 
       var $repo = $('<tr>').attr('class', 'repo-' + repo)
-        .append('<td class="commits">')
-        .append('<td class="merges">')
-        .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
-        .append('<td class="time">');
+      .append('<td class="commits">')
+      .append('<td class="merges">')
+      .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
+      .append('<td class="time">');
 
       repos_container.append($repo);
       repo.$el = $repo;
@@ -104,7 +117,7 @@ $(document).ready(function() {
           repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
           var mergeCommits = repo_state.commits.filter(function(commit) {
             return commit.parents.length > 1}
-          );
+            );
           repo.$el.find('.merges').text(mergeCommits.length || '✔');
 
           if (repo_state.commits.length) {
@@ -126,10 +139,10 @@ $(document).ready(function() {
       });
     });
 
-    if (refresh_rate) {
-      setTimeout(function() {
-        update(repos, refresh_rate);
-      }, refresh_rate);
-    }
-  }
+if (refresh_rate) {
+  setTimeout(function() {
+    update(repos, refresh_rate);
+  }, refresh_rate);
+}
+}
 });
