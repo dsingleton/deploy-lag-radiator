@@ -41,7 +41,7 @@ function prettyDate(time){
 
 $(document).ready(function() {
 
-    var repos = getQueryVariable('repos').split(',');
+    var repos = loadReposFromJson();
     var refresh_rate = getQueryVariable('refresh') || 60 * 1000;
     var from_tag = getQueryVariable('from');
     var to_tag = getQueryVariable('to') || 'master';
@@ -61,6 +61,7 @@ $(document).ready(function() {
     };
 
     var build_http_compare_url = function(repo, from_tag, to_tag) {
+        console.log(repo,'huh');
         return [
         'https://github.com/',
         repo,
@@ -72,79 +73,104 @@ $(document).ready(function() {
     };
 
 
-    repos = $.map(repos, function(repo) {
-        var path = repo,
-        name = repo.replace('/','');
+    // repos = $.map(repos, function(repo) {
+    //     var path = repo,
+    //     name = repo.replace('/','');
 
-        path = repo_owner + '/' + name;
+    //     path = repo_owner + '/' + name;
 
-    return {
-        path: path,
-        name: name
-    };
-});
+    //     return {
+    //         path: path,
+    //         name: name
+    //     };
+    // });
 
+    function loadReposFromJson(){
+        var docs = $.Deferred();
 
-initialise(repos);
-update(repos, refresh_rate);
-
-
-function initialise(repos) {
-    console.log('initialise');
-    $(repos).each(function(i, repo) {
-        console.log(i,repo);
-
-        var $repo = $('<tr>').attr('class', 'repo-' + repo)
-            .append('<td class="commits">')
-            .append('<td class="merges">')
-            .append($('<td class="name">').append($('<a>').attr('href',
-                build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
-            .append('<td class="time">');
-
-        repos_container.append($repo);
-        repo.$el = $repo;
-  });
-}
-
-function update(repos, refresh_rate) {
-    console.log('yoll');
-    $(repos).each(function(i, repo) {
-        api_url = build_api_url(repo.path, from_tag, to_tag);
         $.ajax({
-            url: api_url,
+            url: 'repos/performance-platform.json',
             dataType: 'json',
-            success: function(repo_state) {
-                repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
-                repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
-                var mergeCommits = repo_state.commits.filter(function(commit) {
-                    return commit.parents.length > 1;
-                });
-                repo.$el.find('.merges').text(mergeCommits.length || '✔');
-
-                if (repo_state.commits.length) {
-                    repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
-                }
-            },
-            error: function(e) {
-                // Most likely invalid comparison, one (or both) of the tags don't exist
-                // Or the repo name is bad
-                repo.$el.addClass('unknown');
-
-                if (e.status == 404) {
-                    repo.$el.find('.commits', '.merges').text('?');
-                }
-            },
-            headers: {
-                'Authorization': 'token ' + api_token
-            }
+        })
+        .done(function(data) {
+            docs.resolve(data);
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            // console.log("complete");
         });
+
+        return docs;
+
+    }
+
+    function initialise(repos) {
+
+        $(repos).each(function(i, repo) {
+            console.log(i,repo);
+            var relative_path = repo.owner + '/' + repo.name;
+            var $repo = $('<tr>').attr('class', 'repo-' + repo.name)
+                .append('<td class="commits">')
+                .append('<td class="merges">')
+                .append($('<td class="name">').append($('<a>').attr('href',
+                    build_http_compare_url(relative_path, from_tag, to_tag)).text(repo.name)))
+                .append('<td class="time">');
+
+            repos_container.append($repo);
+            repo.$el = $repo;
+      });
+    }
+
+    function update(repos, refresh_rate) {
+        console.log('yoll');
+        $(repos).each(function(i, repo) {
+            api_url = build_api_url([repo.owner,repo.name].join('/'), from_tag, to_tag);
+            console.log(api_url);
+            $.ajax({
+                url: api_url.replace(/\/$/, ""), // TODO just fix the trailing slash getting on here in the first place
+                dataType: 'json',
+                success: function(repo_state) {
+                    repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
+                    repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
+                    var mergeCommits = repo_state.commits.filter(function(commit) {
+                        return commit.parents.length > 1;
+                    });
+                    repo.$el.find('.merges').text(mergeCommits.length || '✔');
+
+                    if (repo_state.commits.length) {
+                        repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
+                    }
+                },
+                error: function(e) {
+                    // Most likely invalid comparison, one (or both) of the tags don't exist
+                    // Or the repo name is bad
+                    repo.$el.addClass('unknown');
+
+                    if (e.status == 404) {
+                        repo.$el.find('.commits', '.merges').text('?');
+                    }
+                },
+                headers: {
+                    'Authorization': 'token ' + api_token
+                }
+            });
+    });
+
+
+        if (refresh_rate) {
+            setTimeout(function() {
+                update(repos, refresh_rate);
+            }, refresh_rate);
+        }
+    }
+
+
+repos.done(function(repos){
+    initialise(repos);
+    update(repos, refresh_rate);
 });
 
 
-if (refresh_rate) {
-    setTimeout(function() {
-        update(repos, refresh_rate);
-    }, refresh_rate);
-}
-}
 });
