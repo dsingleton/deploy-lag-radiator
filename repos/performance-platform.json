@@ -1,4 +1,14 @@
-[{
-    "name": "stagecraft",
-    "owner": "alphagov"
-}]
+[
+    {
+        "name": "stagecraft",
+        "owner": "alphagov"
+    },
+    {
+        "name": "spotlight",
+        "owner": "alphagov"
+    },
+    {
+        "name": "performanceplatform-collector",
+        "owner": "alphagov"
+    }
+]
