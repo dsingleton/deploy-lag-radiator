@@ -16,10 +16,6 @@
         "owner": "alphagov"
     },
     {
-        "name": "screenshot-as-a-service",
-        "owner": "alphagov"
-    },
-    {
         "name": "performanceplatform-collector",
         "owner": "alphagov"
     }
