@@ -1,10 +1,10 @@
 body {
   margin: 0;
   padding: 0;
-
   font: medium/1.4 sans-serif;
   color: #222;
   background: #fff
+  -webkit-font-smoothing:antialised;
 }
 
 h1 {
@@ -19,11 +19,13 @@ h2{
   font-size: 1.2em;
   padding:.5em 1em;
   font-weight: normal;
+  color: white;
 }
 
 h2 span{
   background:white;
-  padding: .1em .3em
+  color: black;
+  padding: .1em .4em
 }
 
 table {
@@ -32,10 +34,12 @@ table {
 }
 
 th {
-  color: #ccc;
+  color: #aaa;
   font-weight: normal;
-  font-size: 2em;
+  font-size: 1.5em;
+  padding-top:10px;
   text-align: left;
+  border-bottom: 1px solid #ccc
 }
 
 td {
@@ -69,7 +73,7 @@ td {
 }
 
 .strap{
-  background: #4eeab0;
+  background: green;
   width: 100%;
   display: block;
   clear: both;
