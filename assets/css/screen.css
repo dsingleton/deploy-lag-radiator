@@ -9,57 +9,72 @@ body {
 
 h1 {
   margin: 0;
-  font-size: 3vw;
-  background: dodgerBlue;
+  font-size: 1.8em;
   color: #fff;
-  padding: 1vw 4vw;
+  padding: .6em;
   font-weight: normal;
+}
+
+h2{
+  font-size: 1.2em;
+  padding:.5em 1em;
+  font-weight: normal;
+}
+
+h2 span{
+  background:white;
+  padding: .1em .3em
 }
 
 table {
   width: 100%;
+  margin:1.5em 1em;
 }
 
-table th {
-  text-align: left;
-  padding: 2vw 4vw 0;
+th {
   color: #ccc;
   font-weight: normal;
-  font-size: 2vw;
+  font-size: 2em;
+  text-align: left;
 }
 
-table td {
-  font-size: 4vw;
-  padding: 2vw 4vw;
+td {
+  font-size: 2em;
+  padding:1em 0;
   border-bottom: 1px solid #ccc;
 }
 
-table td.name a {
+
+
+.name a {
   text-decoration: none;
   color: #222;
 }
 
-table td.time {
-  font-size: 3vw;
+.time {
+  font-size: 2em;
   color: #888;
 }
 
-table td.commits,
-table td.merges {
-  text-align: center;
-}
-
-table tr.good td.commits,
-table tr.good td.merges {
+.good{
   color: green;
 }
 
-table tr.stale td.commits,
-table tr.stale td.merges, {
+.stale {
   color: red;
 }
 
-table tr.unknown td.commits,
-table tr.unknown td.merges {
+.unknown {
   color: orange;
+}
+
+.strap{
+  background: #4eeab0;
+  width: 100%;
+  display: block;
+  clear: both;
+  float: left;
+}
+.left {
+  float: left;
 }
