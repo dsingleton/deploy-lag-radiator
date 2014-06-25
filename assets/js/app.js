@@ -49,12 +49,21 @@ $(document).ready(function() {
     var repo_owner = getQueryVariable('owner') || 'alphagov';
 
 
-    function updateCompareView(){
-        var $base = $('.js-base').html(base_tag),
-            $to = $('.js-to').html(to_tag);
-    }
+    var $base = $('#select-base');
+        $to = $('#select-to');
 
-    updateCompareView();
+    $base.find('option[value='+base_tag+']').prop('selected',true);
+    $to.find('option[value='+to_tag+']').prop('selected',true);
+
+    $base.on('change', function(){
+        base_tag = $(this).val();
+        update(repos, refresh_rate);
+    });
+
+    $to.on('change', function(){
+        to_tag = $(this).val();
+        update(repos, refresh_rate);
+    });
 
     var repos_container = $('#repos');
 
@@ -69,7 +78,6 @@ $(document).ready(function() {
     };
 
     var build_http_compare_url = function(repo, base_tag, to_tag) {
-        console.log(repo,'huh');
         return [
         'https://github.com/',
         repo,
@@ -104,7 +112,7 @@ $(document).ready(function() {
     function initialise(repos) {
 
         $(repos).each(function(i, repo) {
-            console.log(i,repo);
+            // console.log(i,repo);
             var relative_path = repo.owner + '/' + repo.name;
             var $repo = $('<tr>').attr('class', 'repo-' + repo.name)
                 .append('<td class="commits">')
@@ -119,10 +127,17 @@ $(document).ready(function() {
     }
 
     function update(repos, refresh_rate) {
-        console.log('yoll');
+
+
+        if (refresh_rate) {
+            setTimeout(function() {
+                update(repos, refresh_rate);
+            }, refresh_rate);
+        }
+
         $(repos).each(function(i, repo) {
             api_url = build_api_url([repo.owner,repo.name].join('/'), base_tag, to_tag);
-            console.log(api_url);
+            console.log(repo, api_url);
             $.ajax({
                 url: api_url,
                 dataType: 'json',
@@ -151,20 +166,14 @@ $(document).ready(function() {
                     'Authorization': 'token ' + api_token
                 }
             });
-    });
-
-
-        if (refresh_rate) {
-            setTimeout(function() {
-                update(repos, refresh_rate);
-            }, refresh_rate);
-        }
+        });
     }
 
 
-repos.done(function(repos){
-    initialise(repos);
-    update(repos, refresh_rate);
+repos.done(function(data){
+    repos = data;
+    initialise(data);
+    update(data, refresh_rate);
 });
 
 

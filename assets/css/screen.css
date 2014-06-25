@@ -22,10 +22,11 @@ h2{
   color: white;
 }
 
-h2 span{
+h2 select{
   background:white;
   color: black;
-  padding: .1em .4em
+  padding: .2em .6em;
+  font-size: .8em
 }
 
 table {

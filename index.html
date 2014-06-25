@@ -12,8 +12,24 @@
     <h1>Undeployed commits</h1>
   </div>
   <div class='left'>
-    <h2>Showing how far behind <span class='js-base'></span> is from <span class='js-to'></span></h2>
+    <h2>Showing how far <select id="select-base">
+      <option value="master">master</option>
+      <option value="deployed-to-preview">preview</option>
+      <option value="deployed-to-staging">staging</option>
+      <option value="deployed-to-production">production</option>
+    </select>
+    is behind
+    <select id="select-to">
+      <option value="master">master</option>
+      <option value="deployed-to-preview">preview</option>
+      <option value="deployed-to-staging">staging</option>
+      <option value="deployed-to-production">production</option>
+    </select>
   </div>
+</div>
+
+
+
 </div>
 
 <table id="repos">
@@ -26,6 +42,7 @@
     </tr>
   </thead>
 </table>
+
 
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/app.js"></script>
