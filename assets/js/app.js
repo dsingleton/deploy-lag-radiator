@@ -43,47 +43,42 @@ $(document).ready(function() {
 
     var repos = loadReposFromJson();
     var refresh_rate = getQueryVariable('refresh') || 60 * 1000;
-    var from_tag = getQueryVariable('from');
-    var to_tag = getQueryVariable('to') || 'master';
+    var base_tag = getQueryVariable('base');
+    var to_tag = getQueryVariable('to').replace(/\/$/, "") || 'master';
     var api_token = "9e0ce7d0b9d316907f8db733c6a804c1ab632201";
     var repo_owner = getQueryVariable('owner') || 'alphagov';
 
+
+    function updateCompareView(){
+        var $base = $('.js-base').html(base_tag),
+            $to = $('.js-to').html(to_tag);
+    }
+
+    updateCompareView();
+
     var repos_container = $('#repos');
 
-    var build_api_url = function(repo, from_tag, to_tag) {
+    var build_api_url = function(repo, base_tag, to_tag) {
         return [
         'https://api.github.com/repos/',
         repo,
         '/compare/',
-        from_tag,
+        base_tag,
         '...',
         to_tag].join('');
     };
 
-    var build_http_compare_url = function(repo, from_tag, to_tag) {
+    var build_http_compare_url = function(repo, base_tag, to_tag) {
         console.log(repo,'huh');
         return [
         'https://github.com/',
         repo,
         '/compare/',
-        from_tag,
+        base_tag,
         '...',
         to_tag
         ].join('');
     };
-
-
-    // repos = $.map(repos, function(repo) {
-    //     var path = repo,
-    //     name = repo.replace('/','');
-
-    //     path = repo_owner + '/' + name;
-
-    //     return {
-    //         path: path,
-    //         name: name
-    //     };
-    // });
 
     function loadReposFromJson(){
         var docs = $.Deferred();
@@ -115,7 +110,7 @@ $(document).ready(function() {
                 .append('<td class="commits">')
                 .append('<td class="merges">')
                 .append($('<td class="name">').append($('<a>').attr('href',
-                    build_http_compare_url(relative_path, from_tag, to_tag)).text(repo.name)))
+                    build_http_compare_url(relative_path, base_tag, to_tag)).text(repo.name)))
                 .append('<td class="time">');
 
             repos_container.append($repo);
@@ -126,10 +121,10 @@ $(document).ready(function() {
     function update(repos, refresh_rate) {
         console.log('yoll');
         $(repos).each(function(i, repo) {
-            api_url = build_api_url([repo.owner,repo.name].join('/'), from_tag, to_tag);
+            api_url = build_api_url([repo.owner,repo.name].join('/'), base_tag, to_tag);
             console.log(api_url);
             $.ajax({
-                url: api_url.replace(/\/$/, ""), // TODO just fix the trailing slash getting on here in the first place
+                url: api_url,
                 dataType: 'json',
                 success: function(repo_state) {
                     repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
