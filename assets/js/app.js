@@ -143,7 +143,7 @@ $(document).ready(function() {
                 dataType: 'json',
                 success: function(repo_state) {
                     repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
-                    repo.$el.addClass(repo_state.ahead_by ? 'stale' : 'good');
+                    repo.$el.attr('class', repo_state.ahead_by ? 'stale' : 'good');
                     var mergeCommits = repo_state.commits.filter(function(commit) {
                         return commit.parents.length > 1;
                     });
@@ -151,12 +151,14 @@ $(document).ready(function() {
 
                     if (repo_state.commits.length) {
                         repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
+                    } else {
+                        repo.$el.find('.time').text("")
                     }
                 },
                 error: function(e) {
                     // Most likely invalid comparison, one (or both) of the tags don't exist
                     // Or the repo name is bad
-                    repo.$el.addClass('unknown');
+                    repo.$el.attr('class', 'unknown');
 
                     if (e.status == 404) {
                         repo.$el.find('.commits', '.merges').text('?');
