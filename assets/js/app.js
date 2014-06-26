@@ -151,6 +151,8 @@ $(document).ready(function() {
 
                     if (repo_state.commits.length) {
                         repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
+                    } else {
+                        repo.$el.find('.time').text("")
                     }
                 },
                 error: function(e) {
