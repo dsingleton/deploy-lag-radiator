@@ -31,7 +31,8 @@ h2 select{
 
 table {
   width: 100%;
-  margin:1.5em 1em;
+  padding:1.5em 1em;
+  clear: both;
 }
 
 th {
