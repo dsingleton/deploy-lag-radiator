@@ -152,8 +152,13 @@ $(document).ready(function() {
                     if (repo_state.commits.length) {
                         repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
                     } else {
-                        repo.$el.find('.time').text("")
+                        repo.$el.find('.time').text("");
                     }
+                    // upadte link
+                    repo.$el.find('.name').html(
+                        $('<a>').attr('href',
+                        build_http_compare_url([repo.owner,repo.name].join('/'), base_tag, to_tag)
+                    ).text(repo.name));
                 },
                 error: function(e) {
                     // Most likely invalid comparison, one (or both) of the tags don't exist
