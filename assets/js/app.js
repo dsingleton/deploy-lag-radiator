@@ -98,8 +98,8 @@ $(document).ready(function() {
         .done(function(data) {
             docs.resolve(data);
         })
-        .fail(function() {
-            console.log("error");
+        .fail(function(e) {
+            console.log("error", e);
         })
         .always(function() {
             // console.log("complete");
