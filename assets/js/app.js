@@ -137,7 +137,7 @@ $(document).ready(function() {
 
         $(repos).each(function(i, repo) {
             api_url = build_api_url([repo.owner,repo.name].join('/'), base_tag, to_tag);
-            console.log(repo, api_url);
+            // console.log(repo, api_url);
             $.ajax({
                 url: api_url,
                 dataType: 'json',
