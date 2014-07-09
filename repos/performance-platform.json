@@ -1,0 +1,22 @@
+[
+    {
+        "name": "backdrop",
+        "owner": "alphagov"
+    },
+    {
+        "name": "stagecraft",
+        "owner": "alphagov"
+    },
+    {
+        "name": "pp-puppet",
+        "owner": "alphagov"
+    },
+    {
+        "name": "spotlight",
+        "owner": "alphagov"
+    },
+    {
+        "name": "performanceplatform-collector",
+        "owner": "alphagov"
+    }
+]
