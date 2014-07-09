@@ -45,7 +45,7 @@ $(document).ready(function() {
     var refresh_rate = getQueryVariable('refresh') || 60 * 1000;
     var base_tag = getQueryVariable('base');
     var to_tag = getQueryVariable('to').replace(/\/$/, "") || 'master';
-    var api_token = "9e0ce7d0b9d316907f8db733c6a804c1ab632201";
+    var api_token = "55589aa90628cfe6b639d52455e0db51a9bda10b";
     var repo_owner = getQueryVariable('owner') || 'alphagov';
 
 
