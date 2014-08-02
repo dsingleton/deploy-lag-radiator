@@ -74,7 +74,10 @@ $(document).ready(function() {
       path: path,
       name: name,
       api_compare_url: build_api_compare_url(path, from_tag, to_tag),
-      http_compare_url: build_http_compare_url(path, from_tag, to_tag)
+      http_compare_url: build_http_compare_url(path, from_tag, to_tag),
+      commits_ahead: 0,
+      merges_ahead: 0,
+      oldest_merge: null
     }
   });
 
@@ -102,6 +105,7 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(repo_state) {
           update_repo(repo, repo_state);
+          redraw_repo(repo);
         },
         error: function(e) {
           // Most likely invalid comparison, one (or both) of the tags don't exist
@@ -126,17 +130,20 @@ $(document).ready(function() {
   }
 
   function update_repo(repo, repo_state) {
-    repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
-    repo.$el.attr('class', repo_state.ahead_by ? 'stale' : 'good');
+    repo.commits_ahead = repo_state.ahead_by;
+
     var mergeCommits = repo_state.commits.filter(function(commit) {
       return commit.parents.length > 1}
     );
-    repo.$el.find('.merges').text(mergeCommits.length || '✔');
 
-    if (mergeCommits.length) {
-      repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
-    } else {
-      repo.$el.find('.time').text("")
-    }
+    repo.merges_ahead = mergeCommits.length;
+    repo.oldest_merge = mergeCommits.length ? mergeCommits[0].commit.author.date : null;
+  }
+
+  function redraw_repo(repo) {
+    repo.$el.find('.commits').text(repo.commits_ahead || '✔');
+    repo.$el.attr('class', repo.commits_ahead ? 'stale' : 'good');
+    repo.$el.find('.merges').text(repo.merges_ahead || '✔');
+    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
   }
 });
