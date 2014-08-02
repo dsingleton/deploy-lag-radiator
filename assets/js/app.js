@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   var repos_container = $('#repos');
 
-  var build_api_url = function(repo, from_tag, to_tag) {
+  var build_api_compare_url = function(repo, from_tag, to_tag) {
     return 'https://api.github.com/repos/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
@@ -95,7 +95,7 @@ $(document).ready(function() {
 
   function update(repos, refresh_rate) {
     $(repos).each(function(i, repo) {
-      api_url = build_api_url(repo.path, from_tag, to_tag);
+      api_url = build_api_compare_url(repo.path, from_tag, to_tag);
       $.ajax({
         url: api_url,
         dataType: 'json',
