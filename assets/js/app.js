@@ -72,7 +72,9 @@ $(document).ready(function() {
 
     return {
       path: path,
-      name: name
+      name: name,
+      api_compare_url: build_api_compare_url(path, from_tag, to_tag),
+      http_compare_url: build_http_compare_url(path, from_tag, to_tag)
     }
   });
 
@@ -85,7 +87,7 @@ $(document).ready(function() {
       var $repo = $('<tr>').attr('class', 'repo-' + repo)
         .append('<td class="commits">')
         .append('<td class="merges">')
-        .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
+        .append($('<td class="name">').append($('<a>').attr('href', repo.http_compare_url).text(repo.name)))
         .append('<td class="time">');
 
       repos_container.append($repo);
@@ -95,9 +97,8 @@ $(document).ready(function() {
 
   function update(repos, refresh_rate) {
     $(repos).each(function(i, repo) {
-      api_url = build_api_compare_url(repo.path, from_tag, to_tag);
       $.ajax({
-        url: api_url,
+        url: repo.api_compare_url,
         dataType: 'json',
         success: function(repo_state) {
           update_repo(repo, repo_state);
