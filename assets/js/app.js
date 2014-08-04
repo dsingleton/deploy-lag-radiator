@@ -133,8 +133,8 @@ $(document).ready(function() {
     repo.commits_ahead = repo_state.ahead_by;
 
     var mergeCommits = repo_state.commits.filter(function(commit) {
-      return commit.parents.length > 1}
-    );
+      return commit.parents.length > 1;
+    });
 
     repo.merges_ahead = mergeCommits.length;
     repo.oldest_merge = mergeCommits.length ? mergeCommits[0].commit.author.date : null;
