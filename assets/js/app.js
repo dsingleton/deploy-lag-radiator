@@ -55,6 +55,10 @@ $(document).ready(function() {
     return 'https://api.github.com/repos/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
+  var build_api_tags_url = function(repo) {
+    return 'https://api.github.com/repos/' + repo + '/tags'
+  }
+
   var build_http_compare_url = function(repo, from_tag, to_tag) {
     return 'https://github.com/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
@@ -75,6 +79,7 @@ $(document).ready(function() {
       name: name,
       api_compare_url: build_api_compare_url(path, from_tag, to_tag),
       http_compare_url: build_http_compare_url(path, from_tag, to_tag),
+      api_tags_url: build_api_tags_url(path),
       commits_ahead: 0,
       merges_ahead: 0,
       oldest_merge: null
@@ -138,12 +143,52 @@ $(document).ready(function() {
 
     repo.merges_ahead = mergeCommits.length;
     repo.oldest_merge = mergeCommits.length ? mergeCommits[0].commit.author.date : null;
+
+    // Reset the compare URL to use original references
+    repo.http_compare_url = build_http_compare_url(repo.path, from_tag, to_tag);
+
+    if (repo.commits_ahead) {
+      repo.oldest_sha = repo_state.base_commit.sha;
+      repo.newest_sha = repo_state.commits[repo_state.commits.length - 1].sha;
+
+      $.ajax({
+        url: repo.api_tags_url,
+        dataType: 'json',
+        success: function(repo_tags) {
+          update_repo_compare_url(repo, repo_tags);
+          redraw_repo(repo);
+        },
+        error: function(e) {
+          console.log('Failed to fetch tags for ' + repo.name, e);
+        },
+        headers: {
+          'Authorization': 'token ' + api_token
+        }
+      });
+    }
+  }
+
+  function update_repo_compare_url(repo, repo_tags) {
+    var oldest_tag = repo_tags.filter(function(tag) {
+      return repo.oldest_sha == tag.commit.sha;
+    })[0];
+
+    var newest_tag = repo_tags.filter(function(tag) {
+      return repo.newest_sha == tag.commit.sha;
+    })[0];
+
+    repo.http_compare_url = build_http_compare_url(
+      repo.path,
+      oldest_tag ? oldest_tag.name : from_tag,
+      newest_tag ? newest_tag.name : to_tag
+    );
   }
 
   function redraw_repo(repo) {
     repo.$el.find('.commits').text(repo.commits_ahead || '✔');
     repo.$el.attr('class', repo.commits_ahead ? 'stale' : 'good');
     repo.$el.find('.merges').text(repo.merges_ahead || '✔');
+    repo.$el.find('.name a').attr('href', repo.http_compare_url);
     repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
   }
 });
