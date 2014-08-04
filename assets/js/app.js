@@ -48,6 +48,7 @@ $(document).ready(function() {
   var to_tag = getQueryVariable('to') || 'master';
   var api_token = getQueryVariable('token');
   var repo_owner = getQueryVariable('owner') || 'alphagov';
+  var resolve_tags = !!getQueryVariable('resolve_tags');
 
   var repos_container = $('#repos');
 
@@ -147,7 +148,7 @@ $(document).ready(function() {
     // Reset the compare URL to use original references
     repo.http_compare_url = build_http_compare_url(repo.path, from_tag, to_tag);
 
-    if (repo.commits_ahead) {
+    if (resolve_tags && repo.commits_ahead) {
       repo.oldest_sha = repo_state.base_commit.sha;
       repo.newest_sha = repo_state.commits[repo_state.commits.length - 1].sha;
 
