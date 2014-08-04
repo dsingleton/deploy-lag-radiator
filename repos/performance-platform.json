@@ -18,5 +18,9 @@
     {
         "name": "performanceplatform-collector",
         "owner": "alphagov"
+    },
+    {
+        "name": "performanceplatform-admin",
+        "owner": "alphagov"
     }
 ]
