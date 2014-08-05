@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   var repos_container = $('#repos');
 
-  var build_api_url = function(repo, from_tag, to_tag) {
+  var build_api_compare_url = function(repo, from_tag, to_tag) {
     return 'https://api.github.com/repos/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
 
@@ -72,7 +72,12 @@ $(document).ready(function() {
 
     return {
       path: path,
-      name: name
+      name: name,
+      api_compare_url: build_api_compare_url(path, from_tag, to_tag),
+      http_compare_url: build_http_compare_url(path, from_tag, to_tag),
+      commits_ahead: 0,
+      merges_ahead: 0,
+      oldest_merge: null
     }
   });
 
@@ -85,7 +90,7 @@ $(document).ready(function() {
       var $repo = $('<tr>').attr('class', 'repo-' + repo)
         .append('<td class="commits">')
         .append('<td class="merges">')
-        .append($('<td class="name">').append($('<a>').attr('href', build_http_compare_url(repo.path, from_tag, to_tag)).text(repo.name)))
+        .append($('<td class="name">').append($('<a>').attr('href', repo.http_compare_url).text(repo.name)))
         .append('<td class="time">');
 
       repos_container.append($repo);
@@ -95,23 +100,12 @@ $(document).ready(function() {
 
   function update(repos, refresh_rate) {
     $(repos).each(function(i, repo) {
-      api_url = build_api_url(repo.path, from_tag, to_tag);
       $.ajax({
-        url: api_url,
+        url: repo.api_compare_url,
         dataType: 'json',
         success: function(repo_state) {
-          repo.$el.find('.commits').text(repo_state.ahead_by || '✔');
-          repo.$el.attr('class', repo_state.ahead_by ? 'stale' : 'good');
-          var mergeCommits = repo_state.commits.filter(function(commit) {
-            return commit.parents.length > 1}
-          );
-          repo.$el.find('.merges').text(mergeCommits.length || '✔');
-
-          if (repo_state.commits.length) {
-            repo.$el.find('.time').text(prettyDate(mergeCommits[0].commit.author.date));
-          } else {
-            repo.$el.find('.time').text("")
-          }
+          update_repo(repo, repo_state);
+          redraw_repo(repo);
         },
         error: function(e) {
           // Most likely invalid comparison, one (or both) of the tags don't exist
@@ -133,5 +127,23 @@ $(document).ready(function() {
         update(repos, refresh_rate);
       }, refresh_rate);
     }
+  }
+
+  function update_repo(repo, repo_state) {
+    repo.commits_ahead = repo_state.ahead_by;
+
+    var mergeCommits = repo_state.commits.filter(function(commit) {
+      return commit.parents.length > 1}
+    );
+
+    repo.merges_ahead = mergeCommits.length;
+    repo.oldest_merge = mergeCommits.length ? mergeCommits[0].commit.author.date : null;
+  }
+
+  function redraw_repo(repo) {
+    repo.$el.find('.commits').text(repo.commits_ahead || '✔');
+    repo.$el.attr('class', repo.commits_ahead ? 'stale' : 'good');
+    repo.$el.find('.merges').text(repo.merges_ahead || '✔');
+    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
   }
 });
