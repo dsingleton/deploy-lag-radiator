@@ -15,6 +15,7 @@ Pass configuration as query params, supported params are;
 * `refresh` - How often to update, in seconds [_optional_, defaults to `60`]
 * `from` - A treeish (tag, branch, etc) to start comparing from
 * `to` - A treeish (tag, branch, etc) to compare until [_optional_, defaults to `master`]
+* `resolve_tags` - Set this to anything truthy (ie not an empty string) to look up tags for the `from` and `to` commits to use in the title compare link [_optional_, defaults to off]
 
 ## To do
 
