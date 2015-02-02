@@ -37,7 +37,6 @@ function prettyDate(time){
     day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago" ||
     day_diff < 365 && Math.ceil( day_diff / 31 ) + " months ago" ||
     '1 Year+';
-
 }
 
 $(document).ready(function() {
@@ -187,7 +186,7 @@ $(document).ready(function() {
 
   function redraw_repo(repo) {
     repo.$el.find('.commits').text(repo.commits_ahead || '✔');
-    repo.$el.attr('class', repo.commits_ahead ? 'stale' : 'good');
+    repo.$el.attr('class', repo_state(repo));
     repo.$el.find('.merges').text(repo.merges_ahead || '✔');
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
     repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
@@ -222,5 +221,9 @@ $(document).ready(function() {
     $.each(repos.sort(compare),function(i,repo) {
       repo.$el.detach().appendTo(repos_container);
     });
+  }
+
+  function repo_state(repo) {
+    return repo.commits_ahead ? 'stale' : 'good';
   }
 });
