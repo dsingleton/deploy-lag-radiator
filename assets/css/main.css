@@ -62,3 +62,7 @@ table tr.unknown td.commits,
 table tr.unknown td.merges {
   color: orange;
 }
+
+table tr.very-stale td.time {
+  color: red;
+}

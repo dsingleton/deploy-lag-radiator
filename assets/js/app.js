@@ -19,8 +19,7 @@ function getQueryVariable(variable) {
 // Takes an ISO time and returns a string representing how
 // long ago the date represents.
 function prettyDate(time){
-  var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")),
-    diff = (((new Date()).getTime() - date.getTime()) / 1000),
+  var diff = secondsAgo(time),
     day_diff = Math.floor(diff / 86400);
 
   if ( isNaN(day_diff) || day_diff < 0)
@@ -37,6 +36,14 @@ function prettyDate(time){
     day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago" ||
     day_diff < 365 && Math.ceil( day_diff / 31 ) + " months ago" ||
     '1 Year+';
+}
+
+// Takes an ISO time and returns how long ago in seconds the time was as an
+// integer.
+function secondsAgo(time) {
+  var date = new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," "));
+
+  return ((new Date()).getTime() - date.getTime()) / 1000;
 }
 
 $(document).ready(function() {
@@ -224,6 +231,18 @@ $(document).ready(function() {
   }
 
   function repo_state(repo) {
-    return repo.commits_ahead ? 'stale' : 'good';
+    if (repo.commits_ahead) {
+      var age = secondsAgo(repo.oldest_merge);
+
+      if (age > 86400 * 4) {
+        return 'very-stale';
+      }
+      else {
+        return 'stale';
+      }
+    }
+    else {
+      return 'good';
+    }
   }
 });
