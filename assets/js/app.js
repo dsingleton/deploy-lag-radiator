@@ -191,5 +191,36 @@ $(document).ready(function() {
     repo.$el.find('.merges').text(repo.merges_ahead || '✔');
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
     repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
+ 
+    // TODO: Don't resort the entire list when a single repo updates.
+    sort_repos(); 
+  }
+
+  function sort_repos() {
+    var compare = function(a,b) {
+      // If both repos are up-to-date or equally stale, sort by name.
+      if (a.oldest_merge === b.oldest_merge) {
+        return a.name < b.name ? -1 : 1;
+      }
+      // If repo A is up-to-date, B goes first.
+      else if (!a.oldest_merge) {
+        return 1;
+      }
+      // If repo B is up-to-date, A goes first.
+      else if (!b.oldest_merge) {
+        return -1;
+      }
+      // If repo B is older, B goes first.
+      else if (a.oldest_merge > b.oldest_merge) {
+        return 1;
+      }
+      // If repo A is older, A goes first.
+      else if (a.oldest_merge < b.oldest_merge) {
+        return -1;
+      }
+    }
+    $.each(repos.sort(compare),function(i,repo) {
+      repo.$el.detach().appendTo(repos_container);
+    });
   }
 });
