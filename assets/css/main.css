@@ -54,9 +54,8 @@ table td.merges {
   text-align: center;
 }
 
-table tr.good td.commits,
-table tr.good td.merges {
-  color: green;
+table tr.good {
+  display: none;
 }
 
 table tr.stale td.commits,
