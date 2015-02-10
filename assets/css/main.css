@@ -58,12 +58,11 @@ table tr.good {
   display: none;
 }
 
-table tr.stale td.commits,
-table tr.stale td.merges, {
-  color: red;
-}
-
 table tr.unknown td.commits,
 table tr.unknown td.merges {
   color: orange;
+}
+
+table tr.very-stale td.time {
+  color: red;
 }
