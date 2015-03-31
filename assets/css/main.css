@@ -66,3 +66,8 @@ table tr.unknown td.merges {
 table tr.very-stale td.time {
   color: red;
 }
+
+
+body.april-fools {
+  transform: scaleX(-1);
+}

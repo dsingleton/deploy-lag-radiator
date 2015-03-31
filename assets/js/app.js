@@ -133,10 +133,11 @@ $(document).ready(function() {
         }
       });
     });
-
+    updateAprilFools();
     if (refresh_rate) {
       setTimeout(function() {
         update(repos, refresh_rate);
+        updateAprilFools();
       }, refresh_rate);
     }
   }
@@ -244,5 +245,13 @@ $(document).ready(function() {
     else {
       return 'good';
     }
+  }
+
+  function updateAprilFools() {
+    var start = new Date(2015, 3, 1, 9, 30),
+        end = new Date(2015, 3, 1, 10, 30),
+        now = new Date(),
+        isAprilFools = (now > start && now < end);
+    $('body').toggleClass('april-fools', isAprilFools)
   }
 });
