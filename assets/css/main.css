@@ -42,6 +42,7 @@ table td {
 table td.name a {
   text-decoration: none;
   color: #fff;
+  font-weight: bold;
 }
 
 table td.time {
