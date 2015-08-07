@@ -25,6 +25,7 @@ table {
 table th,
 table td {
   padding: 20px 30px;
+  border-bottom: 10px solid #000;
 }
 
 table th {
@@ -36,7 +37,6 @@ table th {
 
 table td {
   font-size: 2.5em;
-  border-bottom: 1px solid #6F777B;
 }
 
 table td.name a {
@@ -68,7 +68,8 @@ table tr.unknown td.merges {
 }
 
 table tr.very-stale td.time {
-  color: #B10E1E;
+  color: #fff;
+  background-color: #BF1E2D;
 }
 
 body.april-fools {
