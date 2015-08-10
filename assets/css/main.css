@@ -58,13 +58,14 @@ table td.merges {
   text-align: center;
 }
 
-table tr.good {
-  display: none;
-}
-
 table tr.unknown td.commits,
 table tr.unknown td.merges {
   color: orange;
+}
+
+table tr.good td.time {
+  color: #fff;
+  background-color: green;
 }
 
 table tr.very-stale td.time {

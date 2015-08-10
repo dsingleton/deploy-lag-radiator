@@ -197,10 +197,10 @@ $(document).ready(function() {
     repo.$el.attr('class', repo_state(repo));
     repo.$el.find('.merges').text(repo.merges_ahead || '✔');
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
-    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
- 
+    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : 'all deployed');
+
     // TODO: Don't resort the entire list when a single repo updates.
-    sort_repos(); 
+    sort_repos();
   }
 
   function sort_repos() {
