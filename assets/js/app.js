@@ -193,9 +193,16 @@ $(document).ready(function() {
   }
 
   function redraw_repo(repo) {
+    if (repo.merges_ahead) {
+      var message = repo.merges_ahead == 1 ? 'undeployed pull request' : 'undeployed pull requests';
+      var merges_text = repo.merges_ahead + ' <small>' + message + '</small>';
+    } else {
+      var merges_text = '✔';
+    }
+
     repo.$el.find('.commits').text(repo.commits_ahead || '✔');
     repo.$el.attr('class', repo_state(repo));
-    repo.$el.find('.merges').text(repo.merges_ahead || '✔');
+    repo.$el.find('.merges').html(merges_text);
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
     repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : 'all deployed');
 
