@@ -10,7 +10,7 @@ It's intended to highlight changes that may sit undeployed for a long time, caus
 
 Pass configuration as query params, supported params are;
 
-* `token` - A Github API token
+* `token` - A Github API token. You can get one by [creating a personal access token](https://github.com/settings/tokens/new) with the `public_repo` scope.
 * `repos` - A comma-seperated list of repository names on [@alphagov](https://github.com/alphagov)
 * `refresh` - How often to update, in seconds [_optional_, defaults to `60`]
 * `from` - A treeish (tag, branch, etc) to start comparing from
