@@ -32,9 +32,7 @@ function prettyDate(time){
       diff < 7200 && "1 hour ago" ||
       diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
     day_diff == 1 && "Yesterday" ||
-    day_diff < 7 && day_diff + " days ago" ||
-    day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago" ||
-    day_diff < 365 && Math.ceil( day_diff / 31 ) + " months ago" ||
+    day_diff < 365 && day_diff + " days ago" ||
     '1 Year+';
 }
 
@@ -193,14 +191,21 @@ $(document).ready(function() {
   }
 
   function redraw_repo(repo) {
+    if (repo.merges_ahead) {
+      var message = repo.merges_ahead == 1 ? 'undeployed pull request' : 'undeployed pull requests';
+      var merges_text = repo.merges_ahead + ' <small>' + message + '</small>';
+    } else {
+      var merges_text = '✔';
+    }
+
     repo.$el.find('.commits').text(repo.commits_ahead || '✔');
     repo.$el.attr('class', repo_state(repo));
-    repo.$el.find('.merges').text(repo.merges_ahead || '✔');
+    repo.$el.find('.merges').html(merges_text);
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
-    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : '');
- 
+    repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : 'all deployed');
+
     // TODO: Don't resort the entire list when a single repo updates.
-    sort_repos(); 
+    sort_repos();
   }
 
   function sort_repos() {

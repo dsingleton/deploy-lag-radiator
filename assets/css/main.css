@@ -3,14 +3,23 @@ body {
   padding: 0;
 
   font: small/1.4 sans-serif;
-  color: #222;
-  background: #fff
+  color: #fff;
+  font-family: ntatabularnumbers, nta, sans-serif;
+  background:black;
+}
+
+.commits, h1, thead {
+  display: none;
+}
+
+table {
+  margin-top: 20px;
 }
 
 h1 {
   margin: 0;
   font-size: 2em;
-  background: dodgerBlue;
+  background: #2E8ACA;
   color: #fff;
   padding: 10px 30px;
   font-weight: normal;
@@ -18,33 +27,36 @@ h1 {
 
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 
 table th,
 table td {
-  padding: 20px 30px;
+  padding: 5px 30px;
+  border-bottom: 10px solid #000;
 }
 
 table th {
   text-align: left;
-  color: #ccc;
+  color: #6F777B;
   font-weight: normal;
   font-size: 2em;
 }
 
 table td {
-  font-size: 3em;
-  border-bottom: 1px solid #ccc;
+  font-size: 2.5em;
 }
 
 table td.name a {
   text-decoration: none;
-  color: #222;
+  color: #fff;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 table td.time {
   font-size: 2em;
-  color: #888;
+  color: #6F777B;
 }
 
 table th.commits,
@@ -54,8 +66,14 @@ table td.merges {
   text-align: center;
 }
 
-table tr.good {
-  display: none;
+table td.merges {
+  text-align: left;
+}
+
+table td.merges small {
+  font-size: 18px;
+  color: #CCC;
+  vertical-align: middle;
 }
 
 table tr.unknown td.commits,
@@ -63,10 +81,15 @@ table tr.unknown td.merges {
   color: orange;
 }
 
-table tr.very-stale td.time {
-  color: red;
+table tr.good td.time {
+  color: #fff;
+  background-color: green;
 }
 
+table tr.very-stale td.time {
+  color: #fff;
+  background-color: #BF1E2D;
+}
 
 body.april-fools {
   transform: scaleX(-1);
