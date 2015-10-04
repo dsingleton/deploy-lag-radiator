@@ -81,7 +81,7 @@ table tr.unknown td.time {
 
 table tr.good td.time {
   color: #fff;
-  background-color: green;
+  background-color: #006435;
 }
 
 table tr.very-stale td.time {
