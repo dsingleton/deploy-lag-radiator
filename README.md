@@ -12,16 +12,12 @@ It's intended to highlight changes that may sit undeployed for a long time, caus
 
 Pass configuration as query params, supported params are;
 
-* `token` - A Github API token. You can get one by [creating a personal access token](https://github.com/settings/tokens/new) with the `public_repo` scope.
-* `repos` - A comma-seperated list of repository names on [@alphagov](https://github.com/alphagov)
-* `refresh` - How often to update, in seconds [_optional_, defaults to `60`]
-* `from` - A treeish (tag, branch, etc) to start comparing from
-* `to` - A treeish (tag, branch, etc) to compare until [_optional_, defaults to `master`]
-* `resolve_tags` - Set this to anything truthy (ie not an empty string) to look up tags for the `from` and `to` commits to use in the title compare link [_optional_, defaults to off]
-
-## To do
-
-* Support non-@alphagov repos
-* Sort by most-out-of-date (eg, oldest, or most commits)
-* Auto refresh on timer
-* Try and deal with merges, rather than commits (an old commit may only just have been merged)
+| Key | Usage | Required? |
+| --- | ----- | --------- |
+| `token` | A Github API token, otherwise you may be rated limited by the API. You can get one by [creating a personal access token](https://github.com/settings/tokens/new) with the `public_repo` scope.  | No |
+| `repos` | A comma-seperated list of repository names, either `owner/repo-name` or `repo-name` (the later requires an `owner` value to be set) | Yes |
+| `owner` | A Github user, or orgnanisation, used for `repos` that don't specify one. | No |
+| `refresh` | How often to update, in seconds | No, default `60` |
+| `from` | A treeish (tag, branch, etc) to start comparing from | |
+| `to`  | A treeish (tag, branch, etc) to compare until | No, defaults to `master` |
+| `resolve_tags` | Set this to anything truthy (ie not an empty string) to look up tags for the `from` and `to` commits to use in the title compare link | |
