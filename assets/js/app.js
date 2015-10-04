@@ -122,7 +122,7 @@ $(document).ready(function() {
           repo.$el.attr('class', 'unknown');
 
           if (e.status == 404) {
-            repo.$el.find('.diff', '.merges').text('?');
+            repo.$el.find('.time').text('404 Not Found');
           }
         },
         headers: {

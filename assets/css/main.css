@@ -74,8 +74,9 @@ table td.diff small {
   vertical-align: middle;
 }
 
-table tr.unknown td.diff {
-  color: orange;
+table tr.unknown td.time {
+  background: #F47738;
+  color: #fff;
 }
 
 table tr.good td.time {
