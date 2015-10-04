@@ -2,6 +2,8 @@
 
 A _information radiator_ / _glancable_ / _stats screen_ to show how far a repo is behind it's latest deployed version.
 
+![A  Case Study](docs/screenshot.png)
+
 It relies on a consistent tag/branch which tracks the latest deployed version and compares that to HEAD on master (though you can choose a different point).
 
 It's intended to highlight changes that may sit undeployed for a long time, causing a build up of deployment risk.
