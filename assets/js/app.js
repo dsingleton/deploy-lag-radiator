@@ -98,8 +98,7 @@ $(document).ready(function() {
     $(repos).each(function(i, repo) {
 
       var $repo = $('<tr>').attr('class', 'repo-' + repo)
-        .append('<td class="commits">')
-        .append('<td class="merges">')
+        .append('<td class="diff">')
         .append($('<td class="name">').append($('<a>').attr('href', repo.http_compare_url).text(repo.name)))
         .append('<td class="time">');
 
@@ -123,7 +122,7 @@ $(document).ready(function() {
           repo.$el.attr('class', 'unknown');
 
           if (e.status == 404) {
-            repo.$el.find('.commits', '.merges').text('?');
+            repo.$el.find('.diff', '.merges').text('?');
           }
         },
         headers: {
@@ -192,15 +191,15 @@ $(document).ready(function() {
 
   function redraw_repo(repo) {
     if (repo.merges_ahead) {
-      var message = repo.merges_ahead == 1 ? 'undeployed pull request' : 'undeployed pull requests';
-      var merges_text = repo.merges_ahead + ' <small>' + message + '</small>';
-    } else {
-      var merges_text = '✔';
+      var message = repo.merges_ahead == 1 ? 'undeployed merge' : 'undeployed merges';
+      var diff_text = repo.merges_ahead + ' <small>' + message + '</small>';
+    } else if (repo.commits_ahead) {
+      var message = repo.commits_ahead == 1 ? 'undeployed commits' : 'undeployed commits';
+      var diff_text = repo.commits_ahead + ' <small>' + message + '</small>';
     }
 
-    repo.$el.find('.commits').text(repo.commits_ahead || '✔');
     repo.$el.attr('class', repo_state(repo));
-    repo.$el.find('.merges').html(merges_text);
+    repo.$el.find('.diff').html(diff_text);
     repo.$el.find('.name a').attr('href', repo.http_compare_url);
     repo.$el.find('.time').text(repo.oldest_merge ? prettyDate(repo.oldest_merge) : 'all deployed');
 

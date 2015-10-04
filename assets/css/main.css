@@ -8,7 +8,7 @@ body {
   background:black;
 }
 
-.commits, h1, thead {
+h1, thead {
   display: none;
 }
 
@@ -59,25 +59,22 @@ table td.time {
   color: #6F777B;
 }
 
-table th.commits,
-table th.merges,
-table td.commits,
-table td.merges {
+table th.diff,
+table td.diff {
   text-align: center;
 }
 
-table td.merges {
+table td.diff {
   text-align: left;
 }
 
-table td.merges small {
+table td.diff small {
   font-size: 18px;
   color: #CCC;
   vertical-align: middle;
 }
 
-table tr.unknown td.commits,
-table tr.unknown td.merges {
+table tr.unknown td.diff {
   color: orange;
 }
 
