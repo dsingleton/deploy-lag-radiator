@@ -7,6 +7,11 @@ body {
   background: #fff
 }
 
+a {
+  color: #222;
+  text-decoration: none;
+}
+
 h1 {
   margin: 0;
   font-size: 2em;
@@ -34,12 +39,6 @@ table th {
 
 table td {
   font-size: 3em;
-  border-bottom: 1px solid #ccc;
-}
-
-table td.name a {
-  text-decoration: none;
-  color: #222;
 }
 
 table td.time {
@@ -58,11 +57,34 @@ table tr.good {
   display: none;
 }
 
-table tr.unknown td.commits,
-table tr.unknown td.merges {
+body.default table tr.unknown td.commits,
+body.default table tr.unknown td.merges {
   color: orange;
 }
 
-table tr.very-stale td.time {
+body.default table tr.very-stale td.time {
   color: red;
+}
+
+body.default td {
+  border-bottom: 1px solid #ccc;
+}
+
+body.paint-it-black {
+  background: #000;
+  color: #fff;
+  padding: 10px;
+}
+
+body.paint-it-black a {
+  color: #fff;
+}
+
+body.paint-it-black h1,
+body.paint-it-black th {
+  display: none;
+}
+
+body.paint-it-black table tr.unknown td.time {
+  border-right: 10px solid orange;
 }

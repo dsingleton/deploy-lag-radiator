@@ -48,6 +48,7 @@ function secondsAgo(time) {
 
 $(document).ready(function() {
 
+  var color_scheme = getQueryVariable('color_scheme');
   var repos = getQueryVariable('repos').split(',');
   var refresh_rate = (getQueryVariable('refresh') || 60) * 1000;
   var from_tag = getQueryVariable('from');
@@ -69,6 +70,8 @@ $(document).ready(function() {
   var build_http_compare_url = function(repo, from_tag, to_tag) {
     return 'https://github.com/' + repo + '/compare/' + from_tag + '...' + to_tag
   }
+
+  $('body').addClass(color_scheme == 'black' ? 'paint-it-black' : 'default');
 
   repos = $.map(repos, function(repo) {
     var path = repo,
